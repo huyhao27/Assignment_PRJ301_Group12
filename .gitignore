@@ -11,6 +11,8 @@
 .mtj.tmp/
 
 # Package Files #
+*.log
+*.class
 *.jar
 *.war
 *.nar
@@ -22,7 +24,14 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
-/test7/nbproject/private/
-/test7/build/
+
+# Các thư mục và file riêng của NetBeans
+nbproject/private/
+build/
+dist/
+
+# Các file hệ điều hành
+.DS_Store
+Thumbs.db
 /Group12_Assignment/nbproject/private/
 /Group12_Assignment/build/
