@@ -93,7 +93,7 @@
             <img id="imagePreviewPost" class="image-preview" style="display: none;" />
             <textarea class="create-post-content" name="content" placeholder="Bạn đang nghĩ gì?" rows="4"></textarea>
             <input type="file" name="postphoto" id="imageInputPost" class="create-post-image" onchange="previewImage(event, 'Post')" hidden
-                   accept="image/*" />
+                   required accept="image/*" />
             <label for="imageInputPost" class="image-upload-label">
                 <img src="./assets/icon/add-image.png" alt="Thêm ảnh" />
             </label>
@@ -115,7 +115,7 @@
         <form action="create-product" method="post" enctype="multipart/form-data">
             <img id="imagePreviewProd" class="image-preview-prod" style="display: none;" />
             <input type="file" name="image" id="imageInputProd" class="create-post-image" onchange="previewImage(event, 'Prod')" hidden
-                   accept="image/*" />
+                   accept="image/*" required/>
             <label for="imageInputProd" class="image-upload-label">
                 Thêm ảnh: <img src="./assets/icon/add-image.png" alt="Thêm ảnh" />
             </label><br>
