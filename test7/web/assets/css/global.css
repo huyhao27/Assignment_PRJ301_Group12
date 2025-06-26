@@ -1,0 +1,154 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : May 28, 2025, 5:37:36 PM
+    Author     : PC ADMIN
+*/
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+}
+/*=====Success-Error=====*/
+.error-text {
+    color: #e70408;
+}
+.success-text {
+    color: #03BE2C;
+    margin-bottom: 2em;
+}
+.error {
+    color: red;
+    font-size: 0.9em;
+    margin: 0px 0 0.75em 0 ;
+}
+
+/*=====Box-title=====*/
+.box-title {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+}
+/*=====Container=====*/
+.container {
+    height: 100vh;
+    width: 100vw;
+    background: linear-gradient(270deg, white 0%, black 100%);
+}
+/*=====Logo=====*/
+.logo {
+    position: absolute;
+    top: 2rem;
+    left: 2rem;
+    width: 18%;
+    max-width: 266px;
+    height: auto;
+}
+/*=====Home Button=====*/
+.home-btn {
+    position: absolute;
+    top: 3.5rem;
+    right: 1em;
+    width: auto;
+    font-size:3em;
+    color: black;
+    padding: 0.2em;
+    background-color: white;
+    border-radius: 100%; 
+}
+
+/*=====Input=====*/
+.input-group {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 1rem;
+}
+
+.input-group input {
+    padding: 16px;
+    border-radius: 16px;
+    border: 2px solid black;
+    font-size: 1rem;
+}
+
+/*=====Submit button=====*/
+.submit-btn {
+    width: 100%;
+    padding: 1rem;
+    background-color: black;
+    color: white;
+    font-size: 1.25rem;
+    border: none;
+    border-radius: 2rem;
+    cursor: pointer;
+    margin-bottom: 1.5rem;
+}
+
+
+/*=====Or login with=====*/
+.login-alt {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: #000;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    width: 100%;
+}
+
+.login-alt .line {
+    flex: 1;
+    height: 1px;
+    background-color: black;
+    margin: 0 0.5em;
+}
+
+/*=====Icon MXH=====*/
+.social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 3em;
+    margin-bottom: 1rem;
+}
+.social-icons .icon {
+    font-size: 1.4em;
+}
+
+/*====="You already have an account?"=====*/
+.login-signup {
+    text-align: center;
+    font-size: 0.9rem;
+    margin-bottom: 0.5em;
+}
+
+.login-signup a {
+    color: #2b8fce;
+    text-decoration: none;
+    font-weight: 700;
+}
+
+
+/*=====Hover=====*/
+.submit-btn:hover {
+    opacity: 0.8;
+}
+.login-signup a:hover{
+    opacity: 0.8;
+}
+.signup-btn:hover {
+    opacity: 0.8;
+}
+.social-icons .icon:hover {
+    opacity: 0.8;
+    cursor: pointer;
+}
+
+
+
+
