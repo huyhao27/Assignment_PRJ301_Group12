@@ -1235,14 +1235,15 @@ text-area {
 }
 
 .delete-btn {
-    background: none;
+    background-color: #BA1F00;
     border: none;
-    color: #888;
+    color: #ffffff;
     cursor: pointer;
+    padding: 10px;
 }
 
 .delete-btn:hover {
-    color: #ba1f00;
+   opacity: 0.8;
 }
 
 .footer-left {
