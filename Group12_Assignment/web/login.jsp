@@ -13,12 +13,7 @@
     </head>
     <body>
         <div class="container">
-            <img class="logo" src="images/logo/Logo_Deleted_Background.png" alt="Logo" />
-            <!--            <div >
-                            <a href="#" class="home-btn">
-                                <i class="ti-home"></i>
-                            </a>
-                        </div>-->
+            <img class="logo" src="${pageContext.request.contextPath}/assets/icon/logo-white.png" alt="Logo"/>
 
             <div class="login-box">
                 <h1 class="box-title">Đăng nhập</h1>

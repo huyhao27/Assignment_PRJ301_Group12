@@ -13,7 +13,7 @@
     </head>
     <body>
         <div class="container">
-            <img class="logo" src="${pageContext.request.contextPath}/view/images/logo/Logo_Deleted_Background.png" alt="Logo"/>
+            <img class="logo" src="${pageContext.request.contextPath}/assets/icon/logo-white.png" alt="Logo"/>
             <div class="signup-box">
                 <h2 class="box-title">Đăng ký</h2>
 
