@@ -13,9 +13,9 @@ public class ProductDAO extends DBContext {
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 list.add(new Product(
-                    rs.getInt("productId"), rs.getInt("sellerId"), rs.getString("productName"),
-                    rs.getString("image"), rs.getString("description"), rs.getDouble("price"),
-                    rs.getInt("quantity"), rs.getInt("categoryId"), rs.getTimestamp("createdAt")
+                        rs.getInt("productId"), rs.getInt("sellerId"), rs.getString("productName"),
+                        rs.getString("image"), rs.getString("description"), rs.getDouble("price"),
+                        rs.getInt("quantity"), rs.getInt("categoryId"), rs.getTimestamp("createdAt")
                 ));
             }
         } catch (Exception e) {
@@ -32,9 +32,9 @@ public class ProductDAO extends DBContext {
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     list.add(new Product(
-                        rs.getInt("productId"), rs.getInt("sellerId"), rs.getString("productName"),
-                        rs.getString("image"), rs.getString("description"), rs.getDouble("price"),
-                        rs.getInt("quantity"), rs.getInt("categoryId"), rs.getTimestamp("createdAt")
+                            rs.getInt("productId"), rs.getInt("sellerId"), rs.getString("productName"),
+                            rs.getString("image"), rs.getString("description"), rs.getDouble("price"),
+                            rs.getInt("quantity"), rs.getInt("categoryId"), rs.getTimestamp("createdAt")
                     ));
                 }
             }
@@ -51,9 +51,9 @@ public class ProductDAO extends DBContext {
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return new Product(
-                        rs.getInt("productId"), rs.getInt("sellerId"), rs.getString("productName"),
-                        rs.getString("image"), rs.getString("description"), rs.getDouble("price"),
-                        rs.getInt("quantity"), rs.getInt("categoryId"), rs.getTimestamp("createdAt")
+                            rs.getInt("productId"), rs.getInt("sellerId"), rs.getString("productName"),
+                            rs.getString("image"), rs.getString("description"), rs.getDouble("price"),
+                            rs.getInt("quantity"), rs.getInt("categoryId"), rs.getTimestamp("createdAt")
                     );
                 }
             }
@@ -107,4 +107,33 @@ public class ProductDAO extends DBContext {
         }
         return false;
     }
+
+    public ArrayList<Product> getBestSellingProducts(int limit) {
+        ArrayList<Product> list = new ArrayList<>();
+        try {
+            String sql = "SELECT TOP (?) p.productId, p.productName, p.image, p.price "
+                    + "FROM Products p "
+                    + "JOIN OrderItems oi ON p.productId = oi.productId "
+                    + "JOIN Orders o ON oi.orderId = o.orderId "
+                    + "WHERE o.status = 'Completed' "
+                    + "GROUP BY p.productId, p.productName, p.image, p.price "
+                    + "ORDER BY SUM(oi.quantity) DESC";
+
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            ps.setInt(1, limit);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Product p = new Product();
+                p.setProductId(rs.getInt("productId"));
+                p.setProductName(rs.getString("productName"));
+                p.setImage(rs.getString("image"));
+                p.setPrice(rs.getDouble("price"));
+                list.add(p);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
 }
