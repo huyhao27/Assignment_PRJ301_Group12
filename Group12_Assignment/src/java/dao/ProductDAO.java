@@ -110,30 +110,36 @@ public class ProductDAO extends DBContext {
 
     public ArrayList<Product> getBestSellingProducts(int limit) {
         ArrayList<Product> list = new ArrayList<>();
-        try {
-            String sql = "SELECT TOP (?) p.productId, p.productName, p.image, p.price "
-                    + "FROM Products p "
-                    + "JOIN OrderItems oi ON p.productId = oi.productId "
-                    + "JOIN Orders o ON oi.orderId = o.orderId "
-                    + "WHERE o.status = 'Completed' "
-                    + "GROUP BY p.productId, p.productName, p.image, p.price "
-                    + "ORDER BY SUM(oi.quantity) DESC";
+        try (Connection conn = getConnection();){ // Using try-with-resources for connection
+            String sql = "SELECT TOP (?) p.productId, p.productName, p.image, p.price, p.sellerId, p.description, p.quantity, p.categoryId, p.createdAt " // <-- ADDED ALL COLUMNS
+                        + "FROM Products p "
+                        + "LEFT JOIN OrderItems oi ON p.productId = oi.productId " // Changed to LEFT JOIN in case a product has no sales yet
+                        + "LEFT JOIN Orders o ON oi.orderId = o.orderId AND o.status = 'Completed' " // Filter by completed status here
+                        + "GROUP BY p.productId, p.productName, p.image, p.price, p.sellerId, p.description, p.quantity, p.categoryId, p.createdAt " // <-- ADDED ALL COLUMNS to GROUP BY
+                        + "ORDER BY SUM(CASE WHEN o.status = 'Completed' THEN oi.quantity ELSE 0 END) DESC, p.productId ASC"; // Order by completed quantity, then productId for tie-breaking
 
-            PreparedStatement ps = getConnection().prepareStatement(sql);
+            PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, limit);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                Product p = new Product();
-                p.setProductId(rs.getInt("productId"));
-                p.setProductName(rs.getString("productName"));
-                p.setImage(rs.getString("image"));
-                p.setPrice(rs.getDouble("price"));
-                list.add(p);
+                // Populate all fields for the Product constructor
+                list.add(new Product(
+                        rs.getInt("productId"),
+                        rs.getInt("sellerId"),
+                        rs.getString("productName"),
+                        rs.getString("image"),
+                        rs.getString("description"),
+                        rs.getDouble("price"),
+                        rs.getInt("quantity"),
+                        rs.getInt("categoryId"),
+                        rs.getTimestamp("createdAt")
+                ));
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return list;
     }
+
 
 }

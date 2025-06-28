@@ -11,7 +11,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Shop</title>
-        <link rel="stylesheet" href="./assets/css/stylesheet.css?q=23">
+        <link rel="stylesheet" href="./assets/css/stylesheet.css?qwacc=2ae3">
     </head>
     <body>
         <jsp:include page="./assets/includes/sidebar.jsp" />
@@ -47,7 +47,7 @@
                 int end = Math.min(start + pageSize, totalProducts);
                 List<Product> currentPageProducts = listProduct.subList(start, end);
                 
-                ArrayList<Product> bestSellingProducts = productDAO.getBestSellingProducts(3);
+                ArrayList<Product> bestSellingProducts = productDAO.getBestSellingProducts(5);
                 
                 String[] selectedCategories = request.getParameterValues("category");
     String minPriceStr = request.getParameter("minPrice");
@@ -112,6 +112,45 @@
     currentPageProducts = listProduct.subList(start, end);
 
             %>
+             <div class="best-selling-section">
+
+                <div class="section-title">
+
+                    Sản phẩm bán chạy
+
+                </div>
+
+                <div class="best-selling-carousel">
+
+                    <% for(int i = 0; i < bestSellingProducts.size(); i++) {
+                    Product product = bestSellingProducts.get(i);
+                    Category category = categoryDAO.getCategoryById(product.getCategoryId());
+                    %>
+
+                    <div class="carousel-item <%= i == 0 ? "active" : "" %>">
+                        <div class="background-text">
+                            <%= category.getCategoryName() %>
+                        </div>
+
+                        <div class="product-details">
+                            <div class="product-image-container">
+                                <img src="./images/product/<%= product.getImage() %>" alt="<%= product.getProductName() %>">
+                            </div>
+                            <div class="product-info-overlay">
+                                <h3><%= product.getProductName() %></h3>
+                                <p><%= product.getDescription() %></p>
+                            </div>
+                        </div>
+                    </div>
+                    <% } %>
+                </div>
+                <div class="carousel-navigation">
+                    <% for(int i = 0; i < bestSellingProducts.size(); i++) { %>
+                    <span class="dot <%= i == 0 ? "active" : "" %>" onclick="currentSlide(<%= i + 1 %>)"></span>
+                    <% } %>
+                </div>
+            </div>
+
 
             <div class="filter-section">
                 <form action="shop.jsp" method="get">
@@ -214,6 +253,60 @@
                 url.searchParams.set("page", page);
                 window.location.href = url.toString();
             }
+
+            let slideIndex = 1;
+            let autoSlideInterval;
+
+            function showSlides(n) {
+                let slides = document.getElementsByClassName("carousel-item");
+                let dots = document.getElementsByClassName("dot");
+
+                if (slides.length === 0) {
+                    return; // No slides to show
+                }
+
+                if (n > slides.length) {
+                    slideIndex = 1;
+                }
+                if (n < 1) {
+                    slideIndex = slides.length;
+                }
+
+                // Remove 'active' class from all slides and dots
+                for (let i = 0; i < slides.length; i++) {
+                    slides[i].classList.remove('active');
+                }
+                for (let i = 0; i < dots.length; i++) {
+                    dots[i].classList.remove('active');
+                }
+
+                // Add 'active' class to the current slide and dot
+                slides[slideIndex - 1].classList.add('active');
+                dots[slideIndex - 1].classList.add('active');
+            }
+
+            function startAutoSlide() {
+                clearInterval(autoSlideInterval); // Clear any existing interval
+                autoSlideInterval = setInterval(function () {
+                    slideIndex++;
+                    showSlides(slideIndex);
+                }, 5000); // Change image every 5 seconds
+            }
+
+            // Initial setup
+            showSlides(slideIndex); // Show the first slide immediately
+            startAutoSlide(); // Start automatic sliding
+
+            // Event listeners for dots to reset auto-slide
+            document.querySelectorAll('.carousel-navigation .dot').forEach((dot, index) => {
+                dot.addEventListener('click', () => {
+                    slideIndex = index + 1; // Update slideIndex based on clicked dot
+                    showSlides(slideIndex);
+                    startAutoSlide(); // Restart auto-slide after manual interaction
+                });
+            });
+
+
         </script>
     </body>
 </html>
