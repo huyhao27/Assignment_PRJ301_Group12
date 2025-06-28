@@ -13,7 +13,7 @@
     </head>
     <body>
         <div class="container">
-            <img class="logo" src="${pageContext.request.contextPath}/view/images/logo/Logo_Deleted_Background.png" alt="Logo"/>
+            <img class="logo" src="${pageContext.request.contextPath}/assets/icon/logo-white.png" alt="Logo"/>
             <div class="signup-box">
                 <h2 class="box-title">Đăng ký</h2>
 
@@ -23,9 +23,12 @@
                     <div class="input-group">
                         <input type="text" name="name" placeholder="Tên hiển thị" required>
                     </div>
+                    <div class="input-group">
+                        <input type="text" name="phone" placeholder="Số điện thoại" required>
+                    </div>
 
                     <div class="input-group">
-                        <input type="text" name="username" placeholder="Nhập email" required>
+                        <input type="text" name="email" placeholder="Nhập email" required>
                     </div>
 
                     <div class="input-group" style="position: relative;">
@@ -44,21 +47,10 @@
                 <div class="login-signup">
                     Bạn đã có tài khoản rồi? <a href="login.jsp">Đăng nhập</a>
                 </div>
-
-                <div class="login-alt">
-                    <div class="line"></div>
-                    <span>Hoặc đăng nhập bằng</span>
-                    <div class="line"></div>
-                </div>
-
-                <div class="social-icons">
-                    <div class="icon"><i class="ti-facebook"></i></div>
-                    <div class="icon"><i class="ti-google"></i></div>
-                    <div class="icon"><i class="ti-github"></i></div>
-                </div>
+                
             </div>
         </div>
-
+                    
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
         <script>

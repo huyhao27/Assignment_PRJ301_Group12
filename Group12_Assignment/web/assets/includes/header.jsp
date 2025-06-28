@@ -30,7 +30,7 @@
     %>
 
     <a class="logo" href="home.jsp">
-        <img src="./assets/icon/logo2uni.png" alt="Logo" class="logo-img">
+        <img src="./assets/icon/logo-black.png" alt="Logo" class="logo-img">
     </a>
 
 
