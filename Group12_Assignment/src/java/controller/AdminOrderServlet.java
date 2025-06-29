@@ -16,4 +16,15 @@ public class AdminOrderServlet extends HttpServlet {
         request.setAttribute("orderList", dao.getAllOrders());
         request.getRequestDispatcher("/admin/manageOrders.jsp").forward(request, response);
     }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String action = request.getParameter("action");
+        if ("update_status".equals(action)) {
+            int orderId = Integer.parseInt(request.getParameter("orderId"));
+            String status = request.getParameter("status");
+            new OrderDAO().updateOrderStatus(orderId, status);
+        }
+        response.sendRedirect(request.getContextPath() + "/admin/orders");
+    }
 }
