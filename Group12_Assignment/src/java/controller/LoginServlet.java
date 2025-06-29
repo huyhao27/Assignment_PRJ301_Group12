@@ -91,8 +91,14 @@ public class LoginServlet extends HttpServlet {
         if (matched != null) {
             HttpSession session = request.getSession();
             session.setAttribute("account", matched);
-            session.setMaxInactiveInterval(30*60);
-            response.sendRedirect("home.jsp");
+            session.setMaxInactiveInterval(30 * 60);
+
+            // Kiểm tra vai trò và chuyển hướng tương ứng
+            if (matched.getRole().equalsIgnoreCase("admin")) {
+                response.sendRedirect("admin/dashboard.jsp");
+            } else {
+                response.sendRedirect("home.jsp");
+            }
         } else {
             request.setAttribute("error", "Invalid username or password");
             request.getRequestDispatcher("login.jsp").forward(request, response);
