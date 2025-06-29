@@ -31,11 +31,13 @@ a {
     gap: 10px;
     white-space: nowrap;
     flex-shrink: 0;
+    height: 7vh;
+    width: 50%;
 }
 
 .logo-img {
-    width: 30%;
-    height: auto;
+    height: 7vh;
+    width: auto;
     padding-top: 1%;
     padding-left: 5%;
 }

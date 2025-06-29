@@ -7,6 +7,7 @@ package dao;
 import java.sql.*;
 import java.util.*;
 import model.*;
+import util.AIQueryConverter;
 import util.DBContext;
 
 /**
@@ -24,8 +25,7 @@ public class AccountDAO extends DBContext { // Changed: AccountDAO now extends D
         ArrayList<Account> list = new ArrayList<>();
         String sql = "SELECT userId, username, password, fullName, email, phone, avatar, role, createdAt FROM Accounts";
         try (Connection conn = getConnection(); // Changed: Directly calling inherited getConnection()
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+                 PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 Account a = new Account();
                 a.setUserId(rs.getInt("userId"));
@@ -54,7 +54,7 @@ public class AccountDAO extends DBContext { // Changed: AccountDAO now extends D
     public boolean deleteAccount(int userId) {
         String sql = "DELETE FROM Accounts WHERE userId = ?";
         try (Connection conn = getConnection(); // Changed: Directly calling inherited getConnection()
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                 PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, userId);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -72,7 +72,7 @@ public class AccountDAO extends DBContext { // Changed: AccountDAO now extends D
     public boolean registerAccount(Account account) {
         String sql = "INSERT INTO Accounts(username, password, fullName, email, phone, avatar, role) VALUES(?,?,?,?,?,?,?)";
         try (Connection conn = getConnection(); // Changed: Directly calling inherited getConnection()
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                 PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, account.getUsername());
             ps.setString(2, account.getPassword());
             ps.setString(3, account.getFullName());
@@ -96,7 +96,7 @@ public class AccountDAO extends DBContext { // Changed: AccountDAO now extends D
     public Account getAccountByUsername(String username) {
         String sql = "SELECT userId, username, password, fullName, email, phone, avatar, role, createdAt FROM Accounts WHERE username = ?";
         try (Connection conn = getConnection(); // Changed: Directly calling inherited getConnection()
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                 PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, username);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -128,7 +128,7 @@ public class AccountDAO extends DBContext { // Changed: AccountDAO now extends D
     public Account getAccountById(int userId) {
         String sql = "SELECT userId, username, password, fullName, email, phone, avatar, role, createdAt FROM Accounts WHERE userId = ?";
         try (Connection conn = getConnection(); // Changed: Directly calling inherited getConnection()
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                 PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, userId);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -160,7 +160,7 @@ public class AccountDAO extends DBContext { // Changed: AccountDAO now extends D
     public boolean updateAccount(Account account) {
         String sql = "UPDATE Accounts SET username=?, password=?, fullName=?, email=?, phone=?, avatar=?, role=? WHERE userId=?";
         try (Connection conn = getConnection(); // Changed: Directly calling inherited getConnection()
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                 PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, account.getUsername());
             ps.setString(2, account.getPassword());
             ps.setString(3, account.getFullName());
@@ -175,4 +175,47 @@ public class AccountDAO extends DBContext { // Changed: AccountDAO now extends D
             return false;
         }
     }
+
+    public ArrayList<Account> executeAIQueryAccounts(String userQuery) {
+        ArrayList<Account> list = new ArrayList<>();
+        try (Connection con = getConnection()) {
+            String sql = AIQueryConverter.convertToSQL(userQuery, "Accounts",
+                    "userId, username, fullName, avatar, email, phone, role, createdAt");
+            PreparedStatement ps = con.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Account acc = new Account();
+                acc.setUserId(rs.getInt("userId"));
+                acc.setUsername(rs.getString("username"));
+                acc.setFullName(rs.getString("fullName"));
+                acc.setAvatar(rs.getString("avatar"));
+                list.add(acc);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public ArrayList<Account> searchAccounts(String query) {
+        ArrayList<Account> list = new ArrayList<>();
+        String sql = "SELECT * FROM Accounts WHERE username LIKE ? OR fullName LIKE ?";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, "%" + query + "%");
+            ps.setString(2, "%" + query + "%");
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Account acc = new Account();
+                acc.setUserId(rs.getInt("userId"));
+                acc.setUsername(rs.getString("username"));
+                acc.setFullName(rs.getString("fullName"));
+                acc.setAvatar(rs.getString("avatar"));
+                list.add(acc);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
 }

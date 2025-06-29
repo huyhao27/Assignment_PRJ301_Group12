@@ -10,9 +10,10 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <meta charset="UTF-8">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Home</title>
-        <link rel="stylesheet" href="./assets/css/stylesheet.css?v=123">
+        <link rel="stylesheet" href="./assets/css/stylesheet.css?v=1ee23">
     </head>
 
     <% 

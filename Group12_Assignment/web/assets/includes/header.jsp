@@ -30,11 +30,11 @@
     %>
 
     <a class="logo" href="home.jsp">
-        <img src="./assets/icon/logo-black.png" alt="Logo" class="logo-img">
+        <img src="./assets/icon/logo-black.png?e=1111" alt="Logo" class="logo-img">
     </a>
 
 
-    <form class="search" action="#" method="get">
+    <form class="search" action="search" method="post">
         <input type="text" name="query" placeholder="Search..." />
         <button type="submit" class="search-button">
             <img src="./assets/icon/search.png" class="icon" alt="Search" />

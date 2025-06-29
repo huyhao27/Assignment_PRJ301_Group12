@@ -3,6 +3,7 @@ package dao;
 import java.sql.*;
 import java.util.*;
 import model.*;
+import util.AIQueryConverter;
 import util.DBContext;
 
 public class ProductDAO extends DBContext {
@@ -110,13 +111,13 @@ public class ProductDAO extends DBContext {
 
     public ArrayList<Product> getBestSellingProducts(int limit) {
         ArrayList<Product> list = new ArrayList<>();
-        try (Connection conn = getConnection();){ // Using try-with-resources for connection
+        try (Connection conn = getConnection();) { // Using try-with-resources for connection
             String sql = "SELECT TOP (?) p.productId, p.productName, p.image, p.price, p.sellerId, p.description, p.quantity, p.categoryId, p.createdAt " // <-- ADDED ALL COLUMNS
-                        + "FROM Products p "
-                        + "LEFT JOIN OrderItems oi ON p.productId = oi.productId " // Changed to LEFT JOIN in case a product has no sales yet
-                        + "LEFT JOIN Orders o ON oi.orderId = o.orderId AND o.status = 'Completed' " // Filter by completed status here
-                        + "GROUP BY p.productId, p.productName, p.image, p.price, p.sellerId, p.description, p.quantity, p.categoryId, p.createdAt " // <-- ADDED ALL COLUMNS to GROUP BY
-                        + "ORDER BY SUM(CASE WHEN o.status = 'Completed' THEN oi.quantity ELSE 0 END) DESC, p.productId ASC"; // Order by completed quantity, then productId for tie-breaking
+                    + "FROM Products p "
+                    + "LEFT JOIN OrderItems oi ON p.productId = oi.productId " // Changed to LEFT JOIN in case a product has no sales yet
+                    + "LEFT JOIN Orders o ON oi.orderId = o.orderId AND o.status = 'Completed' " // Filter by completed status here
+                    + "GROUP BY p.productId, p.productName, p.image, p.price, p.sellerId, p.description, p.quantity, p.categoryId, p.createdAt " // <-- ADDED ALL COLUMNS to GROUP BY
+                    + "ORDER BY SUM(CASE WHEN o.status = 'Completed' THEN oi.quantity ELSE 0 END) DESC, p.productId ASC"; // Order by completed quantity, then productId for tie-breaking
 
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, limit);
@@ -141,5 +142,48 @@ public class ProductDAO extends DBContext {
         return list;
     }
 
+    public ArrayList<Product> executeAIQueryProducts(String userQuery) {
+        ArrayList<Product> list = new ArrayList<>();
+        try (Connection con = getConnection()) {
+            String sql = AIQueryConverter.convertToSQL(userQuery, "Products",
+                    "productId, sellerId, productName, image, description, price, quantity, categoryId, createdAt");
+            PreparedStatement ps = con.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Product p = new Product();
+                p.setProductId(rs.getInt("productId"));
+                p.setProductName(rs.getString("productName"));
+                p.setImage(rs.getString("image"));
+                p.setPrice(rs.getDouble("price"));
+                p.setDescription(rs.getString("description"));
+                list.add(p);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public ArrayList<Product> searchProducts(String query) {
+        ArrayList<Product> list = new ArrayList<>();
+        String sql = "SELECT * FROM Products WHERE productName LIKE ? OR description LIKE ?";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, "%" + query + "%");
+            ps.setString(2, "%" + query + "%");
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Product p = new Product();
+                p.setProductId(rs.getInt("productId"));
+                p.setProductName(rs.getString("productName"));
+                p.setImage(rs.getString("image"));
+                p.setPrice(rs.getDouble("price"));
+                p.setDescription(rs.getString("description"));
+                list.add(p);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
 
 }

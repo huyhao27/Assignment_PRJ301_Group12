@@ -8,6 +8,7 @@ import java.sql.*;
 import java.util.*;
 import model.*;
 import util.DBContext;
+import util.*;
 
 /**
  *
@@ -183,4 +184,49 @@ public class PostDAO extends DBContext {
             return false;
         }
     }
+    
+    public ArrayList<Post> executeAIQueryPosts(String userQuery) {
+        ArrayList<Post> list = new ArrayList<>();
+        try (Connection con = getConnection()) {
+            String sql = AIQueryConverter.convertToSQL(userQuery, "Posts",
+                    "postId, userId, content, image, createdAt");
+            PreparedStatement ps = con.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Post p = new Post();
+                p.setPostId(rs.getInt("postId"));
+                p.setUserId(rs.getInt("userId"));
+                p.setContent(rs.getString("content"));
+                p.setImage(rs.getString("image"));
+                p.setCreatedAt(rs.getTimestamp("createdAt"));
+                list.add(p);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+    
+    public ArrayList<Post> searchPosts(String query) {
+    ArrayList<Post> list = new ArrayList<>();
+    String sql = "SELECT * FROM Posts WHERE content LIKE ?";
+    try (Connection conn = getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setString(1, "%" + query + "%");
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            Post p = new Post();
+            p.setPostId(rs.getInt("postId"));
+            p.setUserId(rs.getInt("userId"));
+            p.setContent(rs.getString("content"));
+            p.setImage(rs.getString("image"));
+            p.setCreatedAt(rs.getTimestamp("createdAt"));
+            list.add(p);
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return list;
+}
+
 }
