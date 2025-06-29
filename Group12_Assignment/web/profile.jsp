@@ -104,6 +104,9 @@
                     %>
 
                     <div class="feed-post-item" id="post-<%= post.getPostId() %>-popup">
+                        <div class="close-feed-post">
+                            <img src="./assets/icon/cross.png" alt="Close" />
+                        </div>
                         <div class="feed-post-image">
                             <img src="./images/post/<%= post.getImage() %>" alt="" />
                         </div>
@@ -112,6 +115,7 @@
                                 <div class="feed-post-avatar">
                                     <img src="./images/avatar/<%= (accDAO.getAccountById(post.getUserId())).getAvatar() %>" alt="" onclick="window.location.href = 'user.jsp?userId=<%= post.getUserId() %>'"/>
                                     <span><%= (accDAO.getAccountById(post.getUserId())).getUsername() %></span>
+                                    <% if (post.getUserId() == userId) { %>
                                     <div class="post-options-wrapper">
                                         <img src="./assets/icon/menu-dots.png" class="dots-icon" onclick="togglePostMenu(<%= post.getPostId() %>)" />
                                         <div class="action-post-menu" id="post-menu-<%= post.getPostId() %>">
@@ -119,6 +123,7 @@
                                             <a href="delete-post?postId=<%= post.getPostId() %>" onclick="return confirm('Bạn có chắc muốn xóa bài viết này?')">Xóa</a>
                                         </div>
                                     </div>
+                                    <% } %>
                                 </div>
                                 <div class="feed-post-main-caption">
                                     <p><%= post.getContent() %></p>
@@ -371,7 +376,7 @@
 
             function togglePostMenu(postId) {
                 const menu = document.getElementById("post-menu-" + postId);
-                const allMenus = document.querySelectorAll(".post-menu");
+                const allMenus = document.querySelectorAll(".action-post-menu");
                 allMenus.forEach(m => {
                     if (m !== menu)
                         m.style.display = "none";
@@ -382,7 +387,7 @@
             // Đóng menu khi click bên ngoài
             document.addEventListener("click", function (event) {
                 if (!event.target.matches('.dots-icon')) {
-                    document.querySelectorAll('.post-menu').forEach(menu => {
+                    document.querySelectorAll('.action-post-menu').forEach(menu => {
                         menu.style.display = 'none';
                     });
                 }

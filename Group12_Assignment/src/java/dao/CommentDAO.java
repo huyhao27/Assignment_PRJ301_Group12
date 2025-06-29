@@ -59,6 +59,17 @@ public class CommentDAO extends DBContext {
         return false;
     }
 
+    public boolean deleteCommentsByPost(int postId) {
+        String sql = "DELETE FROM Comments WHERE postId = ?";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, postId);
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public Comment getCommentById(int commentId) {
         String sql = "SELECT * FROM Comments WHERE commentId = ?";
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {

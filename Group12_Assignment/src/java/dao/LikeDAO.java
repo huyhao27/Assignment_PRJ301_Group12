@@ -81,4 +81,15 @@ public class LikeDAO extends DBContext {
             return likePost(userId, postId);
         }
     }
+
+    public boolean deleteLikesByPost(int postId) {
+        String sql = "DELETE FROM Likes WHERE postId = ?";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, postId);
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

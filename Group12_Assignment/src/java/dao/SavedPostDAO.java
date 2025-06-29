@@ -72,4 +72,15 @@ public class SavedPostDAO extends DBContext {
             return savePost(userId, postId);
         }
     }
+
+    public boolean deleteSavedPostsByPost(int postId) {
+        String sql = "DELETE FROM SavedPosts WHERE postId = ?";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, postId);
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

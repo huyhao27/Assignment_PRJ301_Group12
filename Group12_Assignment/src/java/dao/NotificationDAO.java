@@ -147,4 +147,16 @@ public class NotificationDAO {
         Notification notification = new Notification(receiverUserId, null, "fl", null);
         return addNotification(notification);
     }
+
+    public boolean deleteNotificationsByPost(int postId) {
+        String sql = "DELETE FROM Notifications WHERE postId = ?";
+        try (Connection conn = dbContext.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, postId);
+            int affectedRows = pstmt.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            Logger.getLogger(NotificationDAO.class.getName()).log(Level.SEVERE, "Error deleting notifications for post " + postId, e);
+            return false;
+        }
+    }
 }

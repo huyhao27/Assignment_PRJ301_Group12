@@ -85,6 +85,24 @@ public class DeletePostServlet extends HttpServlet {
             return;
         }
 
+        // Xóa các bản ghi liên quan trước
+        CommentDAO commentDAO = new CommentDAO();
+        LikeDAO likeDAO = new LikeDAO();
+        SavedPostDAO savedPostDAO = new SavedPostDAO();
+        NotificationDAO notificationDAO = new NotificationDAO();
+        
+        // Xóa comments
+        commentDAO.deleteCommentsByPost(postId);
+        
+        // Xóa likes
+        likeDAO.deleteLikesByPost(postId);
+        
+        // Xóa saved posts
+        savedPostDAO.deleteSavedPostsByPost(postId);
+        
+        // Xóa notifications liên quan đến post
+        notificationDAO.deleteNotificationsByPost(postId);
+
         // Xóa ảnh khỏi thư mục nếu có
         if (post.getImage() != null && !post.getImage().isEmpty()) {
             String buildPath = getServletContext().getRealPath("/images/post/" + post.getImage());
