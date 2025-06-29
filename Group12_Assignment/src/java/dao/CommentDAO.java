@@ -80,4 +80,25 @@ public class CommentDAO extends DBContext {
         return null;
     }
 
+    //ADMIN 
+
+    public ArrayList<Comment> getAllComments() {
+        ArrayList<Comment> list = new ArrayList<>();
+        String sql = "SELECT * FROM Comments ORDER BY createdAt DESC";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                list.add(new Comment(
+                        rs.getInt("commentId"),
+                        rs.getInt("postId"),
+                        rs.getInt("userId"),
+                        rs.getString("content"),
+                        rs.getTimestamp("createdAt")
+                ));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+    //ADMIN
 }

@@ -110,13 +110,13 @@ public class ProductDAO extends DBContext {
 
     public ArrayList<Product> getBestSellingProducts(int limit) {
         ArrayList<Product> list = new ArrayList<>();
-        try (Connection conn = getConnection();){ // Using try-with-resources for connection
+        try (Connection conn = getConnection();) { // Using try-with-resources for connection
             String sql = "SELECT TOP (?) p.productId, p.productName, p.image, p.price, p.sellerId, p.description, p.quantity, p.categoryId, p.createdAt " // <-- ADDED ALL COLUMNS
-                        + "FROM Products p "
-                        + "LEFT JOIN OrderItems oi ON p.productId = oi.productId " // Changed to LEFT JOIN in case a product has no sales yet
-                        + "LEFT JOIN Orders o ON oi.orderId = o.orderId AND o.status = 'Completed' " // Filter by completed status here
-                        + "GROUP BY p.productId, p.productName, p.image, p.price, p.sellerId, p.description, p.quantity, p.categoryId, p.createdAt " // <-- ADDED ALL COLUMNS to GROUP BY
-                        + "ORDER BY SUM(CASE WHEN o.status = 'Completed' THEN oi.quantity ELSE 0 END) DESC, p.productId ASC"; // Order by completed quantity, then productId for tie-breaking
+                    + "FROM Products p "
+                    + "LEFT JOIN OrderItems oi ON p.productId = oi.productId " // Changed to LEFT JOIN in case a product has no sales yet
+                    + "LEFT JOIN Orders o ON oi.orderId = o.orderId AND o.status = 'Completed' " // Filter by completed status here
+                    + "GROUP BY p.productId, p.productName, p.image, p.price, p.sellerId, p.description, p.quantity, p.categoryId, p.createdAt " // <-- ADDED ALL COLUMNS to GROUP BY
+                    + "ORDER BY SUM(CASE WHEN o.status = 'Completed' THEN oi.quantity ELSE 0 END) DESC, p.productId ASC"; // Order by completed quantity, then productId for tie-breaking
 
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, limit);
@@ -141,5 +141,21 @@ public class ProductDAO extends DBContext {
         return list;
     }
 
+    // ADMIN
+    
+    public int getTotalProducts() {
+        String sql = "SELECT COUNT(*) FROM Products";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+    
+    
+    //ADMIN
 
 }

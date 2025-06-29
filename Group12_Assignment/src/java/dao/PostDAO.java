@@ -183,4 +183,20 @@ public class PostDAO extends DBContext {
             return false;
         }
     }
+
+    //ADMIN
+
+    public int getTotalPosts() {
+        String sql = "SELECT COUNT(*) FROM Posts";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    //ADMIN
 }

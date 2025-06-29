@@ -390,4 +390,39 @@ public class OrderDAO {
         return orders;
     }
 
+    //ADMIN
+    public ArrayList<Order> getAllOrders() {
+        ArrayList<Order> orders = new ArrayList<>();
+        String sql = "SELECT orderId, userId, totalPrice, status, orderDate, shippingAddress "
+                + "FROM Orders ORDER BY orderDate DESC";
+        try (Connection conn = dbContext.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                orders.add(new Order(
+                        rs.getInt("orderId"),
+                        rs.getInt("userId"),
+                        rs.getDouble("totalPrice"),
+                        rs.getString("status"),
+                        rs.getTimestamp("orderDate"),
+                        rs.getString("shippingAddress")
+                ));
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(OrderDAO.class.getName()).log(Level.SEVERE, "Error retrieving all orders", e);
+        }
+        return orders;
+    }
+
+    public int getTotalOrders() {
+        String sql = "SELECT COUNT(*) FROM Orders";
+        try (Connection conn = dbContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+    //ADMIN
 }
