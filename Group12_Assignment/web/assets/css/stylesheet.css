@@ -2962,3 +2962,26 @@ select:focus {
 .dot.active {
     background-color: #717171;
 }
+
+/*Error and succes*/
+.error-message {
+    width: 90%;
+    color: #d8000c;
+    background-color: #ffbaba;
+    border: 1px solid #d8000c;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+.success-message {
+    width: 90%;
+    color: #4f8a10;
+    background-color: #dff2bf;
+    border: 1px solid #4f8a10;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-weight: bold;
+}

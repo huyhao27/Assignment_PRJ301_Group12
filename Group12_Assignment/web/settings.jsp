@@ -113,6 +113,13 @@
                             <label for="confirmPassword">Xác nhận mật khẩu mới</label>
                             <input type="password" id="confirmPassword" name="confirmPassword" required>
 
+                            <% if (request.getAttribute("error") != null) { %>
+                            <p class="error-message"><%= request.getAttribute("error") %></p>
+                            <% } else if (request.getAttribute("message") != null) { %>
+                            <p class="success-message"><%= request.getAttribute("message") %></p>
+                            <% } %>
+
+
                             <button type="submit">Đổi mật khẩu</button>
                         </form>
                     </div>
@@ -350,10 +357,27 @@
         </div>
 
     </body>
+    <%
+    String activeTab = (String) request.getAttribute("activeTab");
+    if (activeTab == null) activeTab = "edit-profile"; // mặc định
+    %>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const feedPost = document.querySelector('.feed-post');
+
+
+            const activeTab = "<%= activeTab %>";
+
+            document.querySelectorAll('.settings-item').forEach(i => i.classList.remove('active'));
+            document.querySelectorAll('.settings-content > div').forEach(div => div.classList.remove('active'));
+
+            const activeMenu = document.querySelector(`.settings-item[data-setting="${activeTab}"]`);
+            const activeContent = document.getElementById(activeTab);
+            if (activeMenu)
+                activeMenu.classList.add("active");
+            if (activeContent)
+                activeContent.classList.add("active");
 
             // Mở popup khi click vào ảnh
             document.querySelector('.feed-grid').addEventListener('click', function (e) {
