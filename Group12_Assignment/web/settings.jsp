@@ -13,6 +13,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Settings</title>
         <link rel="stylesheet" href="./assets/css/stylesheet.css">
+        <link rel="stylesheet" href="assets/css/global.css">
     </head>
     <body>
         <jsp:include page="./assets/includes/sidebar.jsp" />
@@ -104,14 +105,36 @@
 
                     <div id="change-password">
                         <form class="settings-form" action="ChangePasswordServlet" method="post">
+
                             <label for="currentPassword">Mật khẩu hiện tại</label>
-                            <input type="password" id="currentPassword" name="currentPassword" required>
+                            <div class="input-password-group">
+                                <input type="password" name="currentPassword" id="currentPassword" required />
+                                <img class="toggle-password"
+                                     src="assets/icon/eye-close.png"
+                                     data-open="assets/icon/eye-open.png"
+                                     data-close="assets/icon/eye-close.png"
+                                     alt="Toggle Password" />
+                            </div>
 
                             <label for="newPassword">Mật khẩu mới</label>
-                            <input type="password" id="newPassword" name="newPassword" required>
+                            <div class="input-password-group">
+                                <input type="password" name="newPassword" id="newPassword" required />
+                                <img class="toggle-password"
+                                     src="assets/icon/eye-close.png"
+                                     data-open="assets/icon/eye-open.png"
+                                     data-close="assets/icon/eye-close.png"
+                                     alt="Toggle Password" />
+                            </div>
 
                             <label for="confirmPassword">Xác nhận mật khẩu mới</label>
-                            <input type="password" id="confirmPassword" name="confirmPassword" required>
+                            <div class="input-password-group">
+                                <input type="password" name="confirmPassword" id="confirmPassword" required />
+                                <img class="toggle-password"
+                                     src="assets/icon/eye-close.png"
+                                     data-open="assets/icon/eye-open.png"
+                                     data-close="assets/icon/eye-close.png"
+                                     alt="Toggle Password" />
+                            </div>
 
                             <% if (request.getAttribute("error") != null) { %>
                             <p class="error-message"><%= request.getAttribute("error") %></p>
@@ -119,10 +142,10 @@
                             <p class="success-message"><%= request.getAttribute("message") %></p>
                             <% } %>
 
-
                             <button type="submit">Đổi mật khẩu</button>
                         </form>
                     </div>
+
 
                     <div id="processing-orders">
 
@@ -363,6 +386,22 @@
     %>
 
     <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const toggles = document.querySelectorAll(".toggle-password");
+
+            toggles.forEach(function (icon) {
+                icon.addEventListener("click", function () {
+                    const input = this.previousElementSibling;
+                    const isHidden = input.type === "password";
+                    input.type = isHidden ? "text" : "password";
+                    this.src = isHidden
+                            ? this.dataset.open
+                            : this.dataset.close;
+                });
+            });
+        });
+
+
         document.addEventListener('DOMContentLoaded', function () {
             const feedPost = document.querySelector('.feed-post');
 
@@ -537,4 +576,5 @@
 
         });
     </script>
+
 </html>
