@@ -218,4 +218,29 @@ public class AccountDAO extends DBContext { // Changed: AccountDAO now extends D
         return list;
     }
 
+    public boolean updateProfile(Account account, boolean updateAvatar) {
+        String sql = updateAvatar
+                ? "UPDATE Accounts SET fullName = ?, email = ?, phone = ?, avatar = ? WHERE userId = ?"
+                : "UPDATE Accounts SET fullName = ?, email = ?, phone = ? WHERE userId = ?";
+
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, account.getFullName());
+            ps.setString(2, account.getEmail());
+            ps.setString(3, account.getPhone());
+
+            if (updateAvatar) {
+                ps.setString(4, account.getAvatar());
+                ps.setInt(5, account.getUserId());
+            } else {
+                ps.setInt(4, account.getUserId());
+            }
+
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 }

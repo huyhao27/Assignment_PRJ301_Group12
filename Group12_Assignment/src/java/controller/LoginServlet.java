@@ -93,7 +93,6 @@ public class LoginServlet extends HttpServlet {
             session.setAttribute("account", matched);
             session.setMaxInactiveInterval(30 * 60);
 
-            // Kiểm tra vai trò và chuyển hướng tương ứng
             if (matched.getRole().equalsIgnoreCase("admin")) {
                 response.sendRedirect("admin/dashboard.jsp");
             } else {

@@ -84,19 +84,19 @@
 
                 <div class="settings-content">
                     <div id="edit-profile" class="active">
-                        <form class="settings-form" action="UpdateProfileServlet" method="post"
+                        <form class="settings-form" action="update-account" method="post"
                               enctype="multipart/form-data">
                             <label for="username">Tên</label>
-                            <input type="text" id="username" name="username" required>
+                            <input type="text" id="username" name="fullname" value="<%=acc.getFullName()%>" required>
 
                             <label for="email">Email</label>
-                            <input type="email" id="email" name="email" required>
+                            <input type="email" id="email" name="email" value="<%=acc.getEmail()%>" required>
 
                             <label for="phone">Số điện thoại</label>
-                            <input type="text" id="phone" name="phone" required>
+                            <input type="text" id="phone" name="phone" pattern="0[0-9]{9}" title="Số điện thoại phải gồm 10 chữ số bắt đầu bằng 0" value="<%=acc.getPhone()%>" required>
 
                             <label for="avatar">Ảnh đại diện</label>
-                            <input type="file" id="avatar" name="avatar" accept=".jpg, .jpeg, .png, .gif">
+                            <input type="file" id="avatar" name="avatar" accept="image/*">
 
                             <button type="submit">Lưu thay đổi</button>
                         </form>
