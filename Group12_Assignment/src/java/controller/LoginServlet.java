@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -91,13 +92,35 @@ public class LoginServlet extends HttpServlet {
         if (matched != null) {
             HttpSession session = request.getSession();
             session.setAttribute("account", matched);
-            session.setMaxInactiveInterval(30*60);
+            session.setMaxInactiveInterval(30 * 60);
+
+            // ✅ Di chuyển phần này lên TRƯỚC sendRedirect
+            if (request.getParameter("remember") != null) {
+                Cookie usernameCookie = new Cookie("username", username);
+                Cookie passwordCookie = new Cookie("password", password);
+
+                usernameCookie.setMaxAge(60 * 60 * 24 * 7); // 7 ngày
+                passwordCookie.setMaxAge(60 * 60 * 24 * 7);
+
+                response.addCookie(usernameCookie);
+                response.addCookie(passwordCookie);
+            } else {
+                Cookie usernameCookie = new Cookie("username", "");
+                Cookie passwordCookie = new Cookie("password", "");
+
+                usernameCookie.setMaxAge(0); // xóa
+                passwordCookie.setMaxAge(0);
+
+                response.addCookie(usernameCookie);
+                response.addCookie(passwordCookie);
+            }
+
+            // ✅ Sau khi xử lý Cookie, mới redirect
             response.sendRedirect("home.jsp");
         } else {
-            request.setAttribute("error", "Invalid username or password");
+            request.setAttribute("error", "Sai tài khoản hoặc mật khẩu!");
             request.getRequestDispatcher("login.jsp").forward(request, response);
         }
-
     }
 
     /**

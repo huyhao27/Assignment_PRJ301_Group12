@@ -1,4 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -11,6 +13,22 @@
         <link rel="stylesheet" href="assets/icon/themify-icons.css">
 
     </head>
+    <%
+    String savedUsername = "";
+    String savedPassword = "";
+
+    Cookie[] cookies = request.getCookies();
+    if (cookies != null) {
+        for (Cookie c : cookies) {
+            if (c.getName().equals("username")) {
+                savedUsername = c.getValue();
+            } else if (c.getName().equals("password")) {
+                savedPassword = c.getValue();
+            }
+        }
+    }
+    %>
+
     <body>
         <div class="container">
             <img class="logo" src="${pageContext.request.contextPath}/assets/icon/logo-white.png" alt="Logo"/>
@@ -20,38 +38,31 @@
 
                 <form action="login" method="post">
                     <div class="input-group">
-                        <input type="text" name="username" placeholder="Email" required />
+                        <input type="text" name="username" placeholder="Email" value="<%= savedUsername %>"required />
                     </div>
 
                     <div class="input-group" style="position: relative;">
-                        <input type="password" name="password" id="password" placeholder="Mật khẩu" required />
+                        <input type="password" name="password" id="password" placeholder="Mật khẩu" value="<%= savedPassword %>"required />
                         <i class="ti-eye toggle-password"
                            style="position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
                     </div>
 
                     <div class="remember-container">
-                        <input type="checkbox" id="remember" name="remember"/>
-                        <label for="remember">Ghi nhớ tôi</label>
+                        <div class="remember-left">
+                            <input type="checkbox" id="remember" name="remember" <%= (!savedUsername.isEmpty()) ? "checked" : "" %> />
+                            <label for="remember">Ghi nhớ tôi</label>
+                        </div>
 
-                        <% if (request.getParameter("error") != null) { %>
-                        <span class="error-text">Không chính xác!</span>
-                        <% } %>
+                        <c:if test="${not empty error}">
+                            <p class="error-text">${error}</p>
+                        </c:if>
                     </div>
+
 
                     <input type="submit" value="Đăng nhập" class="submit-btn"/>
                 </form>
 
-                <div class="login-alt">
-                    <div class="line"></div>
-                    <span>Hoặc đăng nhập bằng</span>
-                    <div class="line"></div>
-                </div>
 
-                <div class="social-icons">
-                    <div class="icon"><i class="ti-facebook"></i></div>
-                    <div class="icon"><i class="ti-google"></i></div>
-                    <div class="icon"><i class="ti-github"></i></div>
-                </div>
 
                 <div class="login-signup">
                     Bạn chưa có tài khoản? <a href="signup.jsp">Đăng ký</a>
