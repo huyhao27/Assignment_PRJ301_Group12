@@ -22,28 +22,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
     cursor: pointer;
     width: 24px;
 }
-.input-password-group {
-    position: relative;
-    width: 100%;
-}
-
-.input-password-group input {
-    width: 100%;
-    padding-right: 40px;
-    box-sizing: border-box;
-}
-
-.input-password-group img.toggle-password {
-    position: absolute;
-    top: 38%;
-    right: 108px;
-    transform: translateY(-50%);
-    width: 24px;
-    height: 24px;
-    cursor: pointer;
-}
-
-
 /*=====Success-Error=====*/
 .error-text {
     color: #e70408;

@@ -13,7 +13,6 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Settings</title>
         <link rel="stylesheet" href="./assets/css/stylesheet.css">
-        <link rel="stylesheet" href="assets/css/global.css">
     </head>
     <body>
         <jsp:include page="./assets/includes/sidebar.jsp" />

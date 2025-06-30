@@ -8,7 +8,27 @@ body {
 a {
     text-decoration: none;
 }
+/*Eye-icon*/
+.input-password-group {
+    position: relative;
+    width: 100%;
+}
 
+.input-password-group input {
+    width: 100%;
+    padding-right: 40px;
+    box-sizing: border-box;
+}
+
+.input-password-group img.toggle-password {
+    position: absolute;
+    top: 38%;
+    right: 108px;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+}
 /* ===== HEADER ===== */
 .main-header {
     position: fixed;
