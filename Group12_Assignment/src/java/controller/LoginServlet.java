@@ -83,7 +83,8 @@ public class LoginServlet extends HttpServlet {
         Account matched = null;
 
         for (Account acc : accounts) {
-            if (acc.getUsername().equals(username) && acc.getPassword().equals(password)) {
+            if ((acc.getUsername().equals(username) || acc.getEmail().equals(username))
+                    && acc.getPassword().equals(password)) {
                 matched = acc;
                 break;
             }

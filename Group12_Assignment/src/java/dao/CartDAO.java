@@ -13,8 +13,8 @@ public class CartDAO extends DBContext {
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return new Cart(
-                        rs.getInt("cartId"),
-                        rs.getInt("userId")
+                            rs.getInt("cartId"),
+                            rs.getInt("userId")
                     );
                 }
             }
@@ -24,6 +24,19 @@ public class CartDAO extends DBContext {
         return null;
     }
 
+    // In CartDAO.java
+    public boolean createCart(Connection conn, int userId) {
+        String sql = "INSERT INTO Carts(userId) VALUES(?)";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+// Keep your original createCart method for other uses if needed
     public boolean createCart(int userId) {
         String sql = "INSERT INTO Carts(userId) VALUES(?)";
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {

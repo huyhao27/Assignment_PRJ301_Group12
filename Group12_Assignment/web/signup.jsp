@@ -17,7 +17,7 @@
             <div class="signup-box">
                 <h2 class="box-title">Đăng ký</h2>
 
-                <form id="signupForm" action="signup" method="post">
+                <form id="signupForm" action="${pageContext.request.contextPath}/register" method="post">
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 
                     <div class="input-group">
@@ -44,7 +44,7 @@
                         <div class="error">${error}</div>
                     </c:if>
 
-                    <button type="submit" class="submit-btn">Đăng ký</button>
+                        <input type="submit" class="submit-btn" value="Đăng ký" />
                 </form>
 
                 <div class="login-signup">

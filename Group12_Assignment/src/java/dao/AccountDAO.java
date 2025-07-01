@@ -68,10 +68,24 @@ public class AccountDAO extends DBContext { // Changed: AccountDAO now extends D
      * @param account The Account object containing details of the new account.
      * @return true if the account was successfully registered, false otherwise.
      */
-    public boolean registerAccount(Account account) {
-        String sql = "INSERT INTO Accounts(username, password, fullName, email, phone, avatar, role) VALUES(?,?,?,?,?,?,?)";
-        try (Connection conn = getConnection(); // Changed: Directly calling inherited getConnection()
-                 PreparedStatement ps = conn.prepareStatement(sql)) {
+    // In AccountDAO.java
+    public Account registerAccount(Account account, CartDAO cartDAO) {
+        String sql = "INSERT INTO Accounts (username, password, fullName, email, phone, avatar, role, createdAt) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            conn = getConnection();
+            // Start a transaction
+            conn.setAutoCommit(false);
+
+            // Prepare the statement to return generated keys
+            ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
+            Timestamp now = new Timestamp(System.currentTimeMillis());
+
             ps.setString(1, account.getUsername());
             ps.setString(2, account.getPassword());
             ps.setString(3, account.getFullName());
@@ -79,10 +93,58 @@ public class AccountDAO extends DBContext { // Changed: AccountDAO now extends D
             ps.setString(5, account.getPhone());
             ps.setString(6, account.getAvatar());
             ps.setString(7, account.getRole());
-            return ps.executeUpdate() > 0;
+            ps.setTimestamp(8, now);
+
+            int rowsAffected = ps.executeUpdate();
+
+            if (rowsAffected > 0) {
+                // Get the generated userId
+                rs = ps.getGeneratedKeys();
+                if (rs.next()) {
+                    int userId = rs.getInt(1);
+                    account.setUserId(userId);
+
+                    // Create the cart within the same transaction
+                    if (cartDAO.createCart(conn, userId)) { // Pass the connection to the cartDAO
+                        // If everything is successful, commit the transaction
+                        conn.commit();
+                        System.out.println("[DEBUG] Account and Cart created successfully for userId: " + userId);
+                        return account; // Return the full account object
+                    }
+                }
+            }
+
+            // If anything fails, rollback the transaction
+            conn.rollback();
+            return null;
+
         } catch (SQLException e) {
+            System.err.println("[ERROR] Lỗi khi đăng ký account:");
             e.printStackTrace();
-            return false;
+            if (conn != null) {
+                try {
+                    conn.rollback();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+            return null;
+        } finally {
+            // Clean up resources
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
+                if (conn != null) {
+                    conn.setAutoCommit(true); // Reset autocommit
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -214,6 +276,21 @@ public class AccountDAO extends DBContext { // Changed: AccountDAO now extends D
         }
 
         return false;
+    }
+
+    public int getUserIdByEmail(String email) {
+        String sql = "SELECT userId FROM Accounts WHERE email = ?";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, email);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("userId");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
     }
 
 }
