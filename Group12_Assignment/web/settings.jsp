@@ -1,7 +1,7 @@
 <%-- 
     Document   : settings
     Created on : Jun 11, 2025, 9:09:58 PM
-    Author     : admin
+    Author     : Tuan
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
