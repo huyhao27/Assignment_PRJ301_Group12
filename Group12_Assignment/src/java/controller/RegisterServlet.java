@@ -10,7 +10,6 @@ import jakarta.servlet.annotation.*;
 import java.io.IOException;
 
 // In RegisterServlet.java
-
 @WebServlet(name = "RegisterServlet", urlPatterns = {"/register"})
 public class RegisterServlet extends HttpServlet {
 
@@ -43,18 +42,12 @@ public class RegisterServlet extends HttpServlet {
         // Use the new transactional method
         Account registeredAccount = accountDAO.registerAccount(account, cartDAO);
 
-        System.out.println("== DEBUG: Registration Info ==");
-        System.out.println("Full name: " + fullName);
-        System.out.println("Phone: " + phone);
-        System.out.println("Email: " + email);
-        System.out.println("Password: " + password);
-
         if (registeredAccount != null) {
             // Redirect to the login page on successful registration
             response.sendRedirect("login.jsp");
         } else {
             // Send an error back to the registration page
-            request.setAttribute("error", "Registration failed. The email may already exist.");
+            request.setAttribute("error", "Email này đã có người sử dụng");
             request.getRequestDispatcher("signup.jsp").forward(request, response);
         }
     }

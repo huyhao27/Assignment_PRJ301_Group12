@@ -62,60 +62,60 @@ public class AccountDAO extends DBContext { // Changed: AccountDAO now extends D
         }
     }
 
-    /**
-     * Registers a new account in the database.
-     *
-     * @param account The Account object containing details of the new account.
-     * @return true if the account was successfully registered, false otherwise.
-     */
     // In AccountDAO.java
     public Account registerAccount(Account account, CartDAO cartDAO) {
-        String sql = "INSERT INTO Accounts (username, password, fullName, email, phone, avatar, role, createdAt) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Accounts (username, password, fullName, email, phone, avatar, role, createdAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
 
         try {
             conn = getConnection();
-            // Start a transaction
             conn.setAutoCommit(false);
+            System.out.println("[DEBUG] Connection opened and autocommit set to false");
 
-            // Prepare the statement to return generated keys
             ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
             Timestamp now = new Timestamp(System.currentTimeMillis());
+            System.out.println("[DEBUG] SQL = " + ps.toString());
 
             ps.setString(1, account.getUsername());
             ps.setString(2, account.getPassword());
             ps.setString(3, account.getFullName());
             ps.setString(4, account.getEmail());
             ps.setString(5, account.getPhone());
-            ps.setString(6, account.getAvatar());
-            ps.setString(7, account.getRole());
+            ps.setString(6, "default.png");
+            ps.setString(7, "user");
             ps.setTimestamp(8, now);
 
+
             int rowsAffected = ps.executeUpdate();
+            System.out.println("[DEBUG] Rows affected by insert: " + rowsAffected);
 
             if (rowsAffected > 0) {
-                // Get the generated userId
                 rs = ps.getGeneratedKeys();
                 if (rs.next()) {
                     int userId = rs.getInt(1);
                     account.setUserId(userId);
+                    System.out.println("[DEBUG] Generated userId: " + userId);
 
-                    // Create the cart within the same transaction
-                    if (cartDAO.createCart(conn, userId)) { // Pass the connection to the cartDAO
-                        // If everything is successful, commit the transaction
+                    boolean cartCreated = cartDAO.createCart(conn, userId);
+                    System.out.println("[DEBUG] Cart created: " + cartCreated);
+
+                    if (cartCreated) {
                         conn.commit();
-                        System.out.println("[DEBUG] Account and Cart created successfully for userId: " + userId);
-                        return account; // Return the full account object
+                        System.out.println("[DEBUG] Transaction committed");
+                        return account;
+                    } else {
+                        System.err.println("[ERROR] Cart creation failed");
                     }
+                } else {
+                    System.err.println("[ERROR] No generated key returned");
                 }
             }
 
-            // If anything fails, rollback the transaction
             conn.rollback();
+            System.err.println("[ERROR] Transaction rolled back");
             return null;
 
         } catch (SQLException e) {
@@ -124,13 +124,13 @@ public class AccountDAO extends DBContext { // Changed: AccountDAO now extends D
             if (conn != null) {
                 try {
                     conn.rollback();
+                    System.err.println("[DEBUG] Rollback done after exception");
                 } catch (SQLException ex) {
                     ex.printStackTrace();
                 }
             }
             return null;
         } finally {
-            // Clean up resources
             try {
                 if (rs != null) {
                     rs.close();
@@ -139,8 +139,9 @@ public class AccountDAO extends DBContext { // Changed: AccountDAO now extends D
                     ps.close();
                 }
                 if (conn != null) {
-                    conn.setAutoCommit(true); // Reset autocommit
+                    conn.setAutoCommit(true);
                     conn.close();
+                    System.out.println("[DEBUG] Connection closed and autocommit reset");
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
