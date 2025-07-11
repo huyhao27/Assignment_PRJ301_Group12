@@ -7,6 +7,7 @@ package dao;
 import java.sql.*;
 import java.util.*;
 import model.*;
+import util.AIQueryConverter;
 import util.DBContext;
 
 /**
@@ -175,19 +176,71 @@ public class AccountDAO extends DBContext { // Changed: AccountDAO now extends D
         }
     }
 
-    // ADMIN
-    public int getTotalAccounts() {
-        String sql = "SELECT COUNT(*) FROM Accounts";
-        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) {
-                return rs.getInt(1);
+    public ArrayList<Account> executeAIQueryAccounts(String userQuery) {
+        ArrayList<Account> list = new ArrayList<>();
+        try (Connection con = getConnection()) {
+            String sql = AIQueryConverter.convertToSQL(userQuery, "Accounts",
+                    "userId, username, fullName, avatar, email, phone, role, createdAt");
+            PreparedStatement ps = con.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Account acc = new Account();
+                acc.setUserId(rs.getInt("userId"));
+                acc.setUsername(rs.getString("username"));
+                acc.setFullName(rs.getString("fullName"));
+                acc.setAvatar(rs.getString("avatar"));
+                list.add(acc);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return 0;
+        return list;
     }
 
-    
-    // ADMIN
+    public ArrayList<Account> searchAccounts(String query) {
+        ArrayList<Account> list = new ArrayList<>();
+        String sql = "SELECT * FROM Accounts WHERE username LIKE ? OR fullName LIKE ?";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, "%" + query + "%");
+            ps.setString(2, "%" + query + "%");
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Account acc = new Account();
+                acc.setUserId(rs.getInt("userId"));
+                acc.setUsername(rs.getString("username"));
+                acc.setFullName(rs.getString("fullName"));
+                acc.setAvatar(rs.getString("avatar"));
+                list.add(acc);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public boolean updateProfile(Account account, boolean updateAvatar) {
+        String sql = updateAvatar
+                ? "UPDATE Accounts SET fullName = ?, email = ?, phone = ?, avatar = ? WHERE userId = ?"
+                : "UPDATE Accounts SET fullName = ?, email = ?, phone = ? WHERE userId = ?";
+
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, account.getFullName());
+            ps.setString(2, account.getEmail());
+            ps.setString(3, account.getPhone());
+
+            if (updateAvatar) {
+                ps.setString(4, account.getAvatar());
+                ps.setInt(5, account.getUserId());
+            } else {
+                ps.setInt(4, account.getUserId());
+            }
+
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 }

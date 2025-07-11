@@ -4,7 +4,6 @@
  */
 package controller;
 
-import dao.AccountDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -12,16 +11,16 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
-import model.Account;
+import model.*;
+import dao.*;
 
 /**
  *
  * @author admin
  */
-@WebServlet(name = "LoginServlet", urlPatterns = {"/login"})
-public class LoginServlet extends HttpServlet {
+@WebServlet(name = "SearchServlet", urlPatterns = {"/search"})
+public class SearchServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -40,10 +39,10 @@ public class LoginServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet LoginServlet</title>");
+            out.println("<title>Servlet SearchServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet LoginServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet SearchServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -75,34 +74,22 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
+        request.setCharacterEncoding("UTF-8");
+        String query = request.getParameter("query");
 
-        ArrayList<Account> accounts = new AccountDAO().getAllAccounts();
-        Account matched = null;
+        PostDAO postDAO = new PostDAO();
+        AccountDAO accountDAO = new AccountDAO();
+        ProductDAO productDAO = new ProductDAO();
 
-        for (Account acc : accounts) {
-            if (acc.getUsername().equals(username) && acc.getPassword().equals(password)) {
-                matched = acc;
-                break;
-            }
-        }
+        ArrayList<Post> postResults = postDAO.searchPosts(query);
+        ArrayList<Account> userResults = accountDAO.searchAccounts(query);
+        ArrayList<Product> productResults = productDAO.searchProducts(query);
 
-        if (matched != null) {
-            HttpSession session = request.getSession();
-            session.setAttribute("account", matched);
-            session.setMaxInactiveInterval(30 * 60);
+        request.setAttribute("postResults", postResults);
+        request.setAttribute("userResults", userResults);
+        request.setAttribute("productResults", productResults);
 
-            if (matched.getRole().equalsIgnoreCase("admin")) {
-                response.sendRedirect("admin/dashboard.jsp");
-            } else {
-                response.sendRedirect("home.jsp");
-            }
-        } else {
-            request.setAttribute("error", "Invalid username or password");
-            request.getRequestDispatcher("login.jsp").forward(request, response);
-        }
-
+        request.getRequestDispatcher("search.jsp").forward(request, response);
     }
 
     /**

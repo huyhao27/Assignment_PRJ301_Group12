@@ -12,7 +12,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Home</title>
-        <link rel="stylesheet" href="./assets/css/stylesheet.css?v=123">
+        <link rel="stylesheet" href="./assets/css/stylesheet.css?v=1eeqqq23">
     </head>
 
     <% 

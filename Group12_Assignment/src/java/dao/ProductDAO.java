@@ -3,6 +3,7 @@ package dao;
 import java.sql.*;
 import java.util.*;
 import model.*;
+import util.AIQueryConverter;
 import util.DBContext;
 
 public class ProductDAO extends DBContext {
@@ -141,21 +142,48 @@ public class ProductDAO extends DBContext {
         return list;
     }
 
-    // ADMIN
-    
-    public int getTotalProducts() {
-        String sql = "SELECT COUNT(*) FROM Products";
-        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) {
-                return rs.getInt(1);
+    public ArrayList<Product> executeAIQueryProducts(String userQuery) {
+        ArrayList<Product> list = new ArrayList<>();
+        try (Connection con = getConnection()) {
+            String sql = AIQueryConverter.convertToSQL(userQuery, "Products",
+                    "productId, sellerId, productName, image, description, price, quantity, categoryId, createdAt");
+            PreparedStatement ps = con.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Product p = new Product();
+                p.setProductId(rs.getInt("productId"));
+                p.setProductName(rs.getString("productName"));
+                p.setImage(rs.getString("image"));
+                p.setPrice(rs.getDouble("price"));
+                p.setDescription(rs.getString("description"));
+                list.add(p);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return 0;
+        return list;
     }
-    
-    
-    //ADMIN
+
+    public ArrayList<Product> searchProducts(String query) {
+        ArrayList<Product> list = new ArrayList<>();
+        String sql = "SELECT * FROM Products WHERE productName LIKE ? OR description LIKE ?";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, "%" + query + "%");
+            ps.setString(2, "%" + query + "%");
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Product p = new Product();
+                p.setProductId(rs.getInt("productId"));
+                p.setProductName(rs.getString("productName"));
+                p.setImage(rs.getString("image"));
+                p.setPrice(rs.getDouble("price"));
+                p.setDescription(rs.getString("description"));
+                list.add(p);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
 
 }
