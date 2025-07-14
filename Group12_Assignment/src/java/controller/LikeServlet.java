@@ -105,7 +105,7 @@ public class LikeServlet extends HttpServlet {
         if (likeCount > oldLikeCount && user.getUserId() != userId) {
             notiDAO.addNotification(notification);
         }
-
+        
         response.setContentType("application/json");
         response.getWriter().write("{\"success\": true, \"isLiked\": " + isLiked + ", \"likeCount\": " + likeCount + "}");
 

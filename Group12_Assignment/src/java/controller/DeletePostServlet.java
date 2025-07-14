@@ -85,7 +85,6 @@ public class DeletePostServlet extends HttpServlet {
             return;
         }
 
-        // Xóa ảnh khỏi thư mục nếu có
         if (post.getImage() != null && !post.getImage().isEmpty()) {
             String buildPath = getServletContext().getRealPath("/images/post/" + post.getImage());
             String sourcePath = new File(getServletContext().getRealPath("/")).getParentFile().getParent()
